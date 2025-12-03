@@ -178,6 +178,28 @@
     </div>
 
     <div class="section">
+      <div class="section-title">Connection Settings</div>
+      <label>
+        Loading wait time (ms)
+        <input id="loadingWaitTime" type="number" value="1000" min="200" max="5000" step="100">
+      </label>
+      <p class="tip">
+        <strong>Adjust for internet speed:</strong><br>
+        • <strong>200-500ms</strong> = Very fast connection<br>
+        • <strong>500-1000ms</strong> = Fast/Normal (default: 1000ms)<br>
+        • <strong>1000-2000ms</strong> = Slow connection<br>
+        • <strong>2000-5000ms</strong> = Very slow connection
+      </p>
+      <p class="tip" style="margin-top: 4px; font-size: 10px; color: #a0aec0;">
+        This controls how long to wait for content to load. Increase if buttons aren't found due to slow loading.
+      </p>
+      <div class="checkbox-group">
+        <input type="checkbox" id="enableScrolling" checked>
+        <label for="enableScrolling">Auto-scroll to load more</label>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="section-title">Safety Features</div>
       <label>
         Session break after (invites)
@@ -187,10 +209,6 @@
         Break duration (seconds)
         <input id="sessionBreakDuration" type="number" value="180" min="30" max="600">
       </label>
-      <div class="checkbox-group">
-        <input type="checkbox" id="enableScrolling" checked>
-        <label for="enableScrolling">Auto-scroll to load more</label>
-      </div>
     </div>
 
     <div class="button-group">

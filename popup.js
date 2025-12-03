@@ -9,7 +9,7 @@ const dailyCountEl = document.getElementById('dailyCount');
 // Load saved settings
 chrome.storage.local.get([
   'minDelay', 'maxDelay', 'perRun', 'dailyCap',
-  'sessionBreakAfter', 'sessionBreakDuration', 'enableScrolling'
+  'sessionBreakAfter', 'sessionBreakDuration', 'enableScrolling', 'loadingWaitTime'
 ], (result) => {
   if (result.minDelay) document.getElementById('minDelay').value = result.minDelay;
   if (result.maxDelay) document.getElementById('maxDelay').value = result.maxDelay;
@@ -18,6 +18,7 @@ chrome.storage.local.get([
   if (result.sessionBreakAfter) document.getElementById('sessionBreakAfter').value = result.sessionBreakAfter;
   if (result.sessionBreakDuration) document.getElementById('sessionBreakDuration').value = result.sessionBreakDuration;
   if (result.enableScrolling !== undefined) document.getElementById('enableScrolling').checked = result.enableScrolling;
+  if (result.loadingWaitTime) document.getElementById('loadingWaitTime').value = result.loadingWaitTime;
 });
 
 // Get current status from content script
@@ -67,13 +68,14 @@ function updateUIWithStatus(status) {
 // Start automation
 startBtn.addEventListener('click', async () => {
   const config = {
-    minDelay: Number(document.getElementById('minDelay').value) || 800,
-    maxDelay: Number(document.getElementById('maxDelay').value) || 2200,
+    minDelay: Number(document.getElementById('minDelay').value) || 300,
+    maxDelay: Number(document.getElementById('maxDelay').value) || 600,
     perRun: Number(document.getElementById('perRun').value) || 100,
     dailyCap: Number(document.getElementById('dailyCap').value) || 1000,
     sessionBreakAfter: Number(document.getElementById('sessionBreakAfter').value) || 50,
     sessionBreakDuration: Number(document.getElementById('sessionBreakDuration').value) * 1000, // convert to ms
-    enableScrolling: document.getElementById('enableScrolling').checked
+    enableScrolling: document.getElementById('enableScrolling').checked,
+    loadingWaitTime: Number(document.getElementById('loadingWaitTime').value) || 1000
   };
   
   // Validate config
@@ -87,6 +89,11 @@ startBtn.addEventListener('click', async () => {
     return;
   }
   
+  if (config.loadingWaitTime < 200 || config.loadingWaitTime > 5000) {
+    alert('Loading wait time must be between 200ms and 5000ms');
+    return;
+  }
+  
   // Save settings
   chrome.storage.local.set({
     minDelay: config.minDelay,
@@ -95,7 +102,8 @@ startBtn.addEventListener('click', async () => {
     dailyCap: config.dailyCap,
     sessionBreakAfter: config.sessionBreakAfter,
     sessionBreakDuration: config.sessionBreakDuration / 1000,
-    enableScrolling: config.enableScrolling
+    enableScrolling: config.enableScrolling,
+    loadingWaitTime: config.loadingWaitTime
   });
   
   // Send to content script

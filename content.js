@@ -9,7 +9,8 @@ let config = {
   sessionBreakAfter: 50,
   sessionBreakDuration: 180000, // 3 minutes
   scrollDelay: 800,
-  enableScrolling: true
+  enableScrolling: true,
+  loadingWaitTime: 1000 // Base wait time for loading content (ms) - adjust for connection speed
 };
 let dailyCount = 0;
 let runCount = 0;
@@ -561,8 +562,9 @@ async function scrollToLoadMore() {
     await sleep(randInt(80, 150));
   }
   
-  // Wait for new content to load (faster)
-  const scrollWait = config.scrollDelay + randInt(200, 600);
+  // Wait for new content to load (user-configurable)
+  const baseScrollWait = config.scrollDelay + (config.loadingWaitTime * 0.3);
+  const scrollWait = randInt(baseScrollWait * 0.8, baseScrollWait * 1.2);
   await sleep(scrollWait);
   
   const newScroll = container.scrollTop;
@@ -739,17 +741,19 @@ async function runQueue() {
   
   console.log('✅ Modal detected, waiting for modal to fully load...');
   
-  // Wait for modal content to load (faster)
-  await sleep(randInt(500, 1000));
+  // Wait for modal content to load (user-configurable)
+  const initialWait = randInt(config.loadingWaitTime * 0.5, config.loadingWaitTime);
+  await sleep(initialWait);
   
-  // Initial button check with multiple retries (faster)
+  // Initial button check with multiple retries (user-configurable)
   let initialButtons = findInviteButtons();
   let retryCount = 0;
-  const maxRetries = 3; // Reduced retries for speed
+  const maxRetries = Math.max(3, Math.ceil(config.loadingWaitTime / 500)); // More retries for slower connections
   
   while (initialButtons.length === 0 && retryCount < maxRetries) {
     retryCount++;
-    const waitTime = randInt(800, 1500) + (retryCount * 300); // Faster progressive wait
+    const baseWait = config.loadingWaitTime + (retryCount * (config.loadingWaitTime * 0.3));
+    const waitTime = randInt(baseWait * 0.8, baseWait * 1.2);
     console.log(`⏳ No buttons found (attempt ${retryCount}/${maxRetries}), waiting ${waitTime/1000}s for content to load...`);
     chrome.runtime.sendMessage({ type: 'status', text: 'loading' });
     await sleep(waitTime);
@@ -829,8 +833,9 @@ async function runQueue() {
         lastScrollTime = Date.now();
         
         if (scrolled) {
-          // Wait after scrolling (faster)
-          const waitAfterScroll = randInt(800, 1500) + (consecutiveNoButtons * 200);
+          // Wait after scrolling (user-configurable)
+          const baseWait = config.loadingWaitTime + (consecutiveNoButtons * (config.loadingWaitTime * 0.2));
+          const waitAfterScroll = randInt(baseWait * 0.8, baseWait * 1.2);
           console.log(`⏳ Waiting ${waitAfterScroll/1000}s for new content to load...`);
           await sleep(waitAfterScroll);
           
@@ -853,11 +858,15 @@ async function runQueue() {
       }
       lastButtonCount = buttons.length;
       
-      // Progressive waiting: faster waits
-      const waitTime = randInt(800, 1500) + (consecutiveNoButtons * 300);
+      // Progressive waiting: user-configurable based on connection speed
+      const baseWait = config.loadingWaitTime + (consecutiveNoButtons * (config.loadingWaitTime * 0.3));
+      const waitTime = randInt(baseWait * 0.8, baseWait * 1.2);
       
-      // No buttons found after attempts (reduced threshold for speed)
-      if (consecutiveNoButtons >= 10 || noProgressCount >= 7) {
+      // No buttons found after attempts (adjustable threshold based on wait time)
+      const maxAttempts = Math.max(10, Math.ceil(config.loadingWaitTime / 200));
+      const maxNoProgress = Math.max(7, Math.ceil(config.loadingWaitTime / 300));
+      
+      if (consecutiveNoButtons >= maxAttempts || noProgressCount >= maxNoProgress) {
         console.log('✅ No more invite buttons found in modal');
         console.log(`   (Checked ${consecutiveNoButtons} times)`);
         break;
