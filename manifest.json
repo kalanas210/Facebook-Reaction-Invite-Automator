@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "FB Reaction Invite Automator",
+    "version": "2.0",
+    "description": "Safely automate Facebook reaction invites with human-like behavior, delays, and smart features.",
+    "permissions": ["scripting", "storage", "activeTab", "alarms"],
+    "host_permissions": ["https://www.facebook.com/*", "https://facebook.com/*"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_title": "FB Invite Automator"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://www.facebook.com/*", "https://facebook.com/*"],
+        "js": ["content.js"],
+        "run_at": "document_idle"
+      }
+    ]
+  }
+  

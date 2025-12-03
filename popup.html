@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 340px; 
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h3 { 
+      color: #5a67d8; 
+      margin-bottom: 16px;
+      font-size: 18px;
+      text-align: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+    .section {
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .section-title::before {
+      content: '▶';
+      margin-right: 6px;
+      font-size: 10px;
+    }
+    label { 
+      display: block; 
+      margin-top: 8px; 
+      font-size: 12px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    input[type=number] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+    input[type=number]:focus {
+      outline: none;
+      border-color: #5a67d8;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .checkbox-group input[type=checkbox] {
+      margin-right: 8px;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+    }
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #startBtn {
+      background: #48bb78;
+      color: white;
+    }
+    #startBtn:hover:not(:disabled) {
+      background: #38a169;
+      transform: translateY(-1px);
+    }
+    #stopBtn {
+      background: #f56565;
+      color: white;
+    }
+    #stopBtn:hover:not(:disabled) {
+      background: #e53e3e;
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status-box {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+      background: #f7fafc;
+      border-left: 4px solid #5a67d8;
+    }
+    .status-item {
+      font-size: 12px;
+      color: #2d3748;
+      margin: 4px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .status-label {
+      font-weight: 500;
+    }
+    .status-value {
+      font-weight: 600;
+      color: #5a67d8;
+    }
+    .warning {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 12px;
+      font-size: 11px;
+      color: #92400e;
+    }
+    .tip {
+      font-size: 11px;
+      color: #718096;
+      margin-top: 8px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>🚀 FB Invite Automator</h3>
+    
+    <div class="section">
+      <div class="section-title">Timing Settings</div>
+      <label>
+        Min delay (ms)
+        <input id="minDelay" type="number" value="300" min="100" max="5000">
+      </label>
+      <label>
+        Max delay (ms)
+        <input id="maxDelay" type="number" value="600" min="200" max="10000">
+      </label>
+      <p class="tip">Recommended: 300-600ms for fast automation</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Limits</div>
+      <label>
+        Invites per run
+        <input id="perRun" type="number" value="100" min="10" max="500">
+      </label>
+      <label>
+        Daily limit
+        <input id="dailyCap" type="number" value="1000" min="100" max="10000">
+      </label>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Safety Features</div>
+      <label>
+        Session break after (invites)
+        <input id="sessionBreakAfter" type="number" value="50" min="20" max="200">
+      </label>
+      <label>
+        Break duration (seconds)
+        <input id="sessionBreakDuration" type="number" value="180" min="30" max="600">
+      </label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="enableScrolling" checked>
+        <label for="enableScrolling">Auto-scroll to load more</label>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="startBtn">▶ Start</button>
+      <button id="stopBtn" disabled>⏹ Stop</button>
+    </div>
+
+    <div class="status-box">
+      <div class="status-item">
+        <span class="status-label">Status:</span>
+        <span class="status-value" id="status">Idle</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">This run:</span>
+        <span class="status-value" id="runCount">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Session:</span>
+        <span class="status-value" id="sessionCount">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Today:</span>
+        <span class="status-value" id="dailyCount">0</span>
+      </div>
+    </div>
+
+    <div class="warning">
+      ⚠️ <strong>Instructions:</strong><br>
+      1. Open your Facebook post<br>
+      2. Click on reactions (likes/loves) to open the modal<br>
+      3. Click "Start" button below<br>
+      4. Extension will automatically:<br>
+      &nbsp;&nbsp;• Find all "Invite" buttons<br>
+      &nbsp;&nbsp;• Scroll within modal to load more<br>
+      &nbsp;&nbsp;• Send invites with human-like delays<br>
+      &nbsp;&nbsp;• Stop when all invites are sent
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
