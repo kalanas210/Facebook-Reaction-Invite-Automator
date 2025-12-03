@@ -10,9 +10,9 @@
       "default_popup": "popup.html",
       "default_title": "FB Invite Automator",
       "default_icon": {
-        "16": "icon16.png",
-        "48": "icon48.png",
-        "128": "icon128.png"
+        "16": "2023_Facebook_icon.svg.png",
+        "48": "2023_Facebook_icon.svg.png",
+        "128": "2023_Facebook_icon.svg.png"
       }
     },
     "background": {
@@ -26,9 +26,9 @@
       }
     ],
     "icons": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "2023_Facebook_icon.svg.png",
+      "48": "2023_Facebook_icon.svg.png",
+      "128": "2023_Facebook_icon.svg.png"
     }
   }
   
