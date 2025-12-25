@@ -51,6 +51,7 @@ function findReactionModal() {
   }
   
   // Strategy 2: Alternative dialog selectors
+  //select dialogs issue solved 
   const dialogSelectors = [
     'div[role="dialog"]',
     '[aria-labelledby*="reaction"]',
