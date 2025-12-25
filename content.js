@@ -10,7 +10,7 @@ let config = {
   sessionBreakDuration: 180000, // 3 minutes
   scrollDelay: 800,
   enableScrolling: true,
-  loadingWaitTime: 1000 // Base wait time for loading content (ms) - adjust for connection speed
+  loadingWaitTime: 1000 // Base wait time for loading content (ms) - adjust for connection speed - base interval 200ms to 600ms
 };
 let dailyCount = 0;
 let runCount = 0;
